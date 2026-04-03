@@ -1,6 +1,8 @@
 from faker import Faker
 fake = Faker()
 
+
+"""Фейковая генерация тестового юзера"""
 class RegisterModel:
     def random(self):
         username = fake.user_name()

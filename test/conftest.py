@@ -1,13 +1,7 @@
 
-"""2. Фикстуры:
-   - form_page: объект страницы FormPage
-   - fake_form_data: тестовые данные через Faker
-"""
-
 import logging
 
 import pytest
-from faker import Faker
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
