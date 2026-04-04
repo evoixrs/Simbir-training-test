@@ -1,7 +1,9 @@
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.ui import WebDriverWait
 
 from pages.base_page import BasePage
-from pages.locators.form_page_locators import FormPageLocators
+from locators.form_page_locators import FormPageLocators
 
 """Методы для работы со страницей Form Fields"""
 class FormPage(BasePage):
@@ -69,4 +71,21 @@ class FormPage(BasePage):
     """Клик на кнопку Submit"""
     def submit(self):
         self.click(FormPageLocators.SUBMIT_BUTTON)
+        WebDriverWait(self.driver, 10).until(EC.alert_is_present())
+        return self
+
+    """Ожидание alert и сразу получаем его объект"""
+    def get_alert_text(self):
+        alert = WebDriverWait(self.driver, 10).until(EC.alert_is_present())
+
+        """Возвращаем текст alert"""
+        return alert.text
+
+    """Ожидание alert и сразу получаем его объект"""
+    def accept_alert(self):
+        # Ждем alert и сразу получаем его объект.
+        alert = WebDriverWait(self.driver, 10).until(EC.alert_is_present())
+
+        """Закрываем alert"""
+        alert.accept()
         return self

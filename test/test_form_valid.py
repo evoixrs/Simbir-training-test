@@ -1,7 +1,12 @@
+
 from models.register import RegisterModel
 
-"""Генерация тестовых данных Юзера через Faker"""
-def test_form_valid(form_page):
+
+def test_form_valid(form_page, base_url):
+    """Открывем страницу формы"""
+    form_page.open(base_url)
+
+    """Генерация тестовых данных Юзера через Faker"""
     user = RegisterModel().random()
 
     """Формируем текст для поля Message из списка Automation tools"""
@@ -17,3 +22,9 @@ def test_form_valid(form_page):
         .fill_email(user["email"]) \
         .fill_message(message_text) \
         .submit()
+
+    """Проверяем текст alert после отправки Submit"""
+    assert form_page.get_alert_text() == "Message received!"
+
+    """Закрываем alert"""
+    form_page.accept_alert()
