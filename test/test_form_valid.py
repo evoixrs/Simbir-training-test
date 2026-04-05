@@ -1,18 +1,13 @@
-
 from models.register import RegisterModel
 
 
 def test_form_valid(form_page, base_url):
-    """Открывем страницу формы"""
     form_page.open(base_url)
 
-    """Генерация тестовых данных Юзера через Faker"""
     user = RegisterModel().random()
+    tools = form_page.get_automation_tools()
+    expected_message_text = f"{len(tools)}, {max(tools, key=len)}"
 
-    """Формируем текст для поля Message из списка Automation tools"""
-    message_text = form_page.build_message_from_tools()
-
-    """Заполняем форму данными"""
     form_page.fill_name(user["name"]) \
         .fill_password(user["password"]) \
         .select_milk() \
@@ -20,11 +15,12 @@ def test_form_valid(form_page, base_url):
         .select_yellow() \
         .select_automation("undecided") \
         .fill_email(user["email"]) \
-        .fill_message(message_text) \
-        .submit()
+        .fill_message(expected_message_text)
 
-    """Проверяем текст alert после отправки Submit"""
+    assert form_page.build_message_from_tools() == expected_message_text
+    assert form_page.get_message_value() == expected_message_text
+
+    form_page.submit()
+
     assert form_page.get_alert_text() == "Message received!"
-
-    """Закрываем alert"""
     form_page.accept_alert()

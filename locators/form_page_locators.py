@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 """Нужные локаторы для теста"""
 class FormPageLocators:
     NAME_INPUT = (By.ID, "name-input")
+    NAME_REQUIRED_ERROR = (By.XPATH, "//input[@id='name-input']/following::p[contains(@class, 'red_txt')][1]")
 
     PASSWORD_INPUT = (By.CSS_SELECTOR, "input[type='password']")
 
