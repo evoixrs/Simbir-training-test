@@ -48,6 +48,11 @@ class FormPage(BasePage):
 
     """Получить элементы списка Automation tools"""
     def get_automation_tools(self):
+        WebDriverWait(self.driver, 2).until(
+            EC.presence_of_all_elements_located(
+                FormPageLocators.AUTOMATION_TOOLS_ITEMS
+            )
+        )
         tools = self.finds(*FormPageLocators.AUTOMATION_TOOLS_ITEMS)
 
         """Вернет текст элементов из списка"""
