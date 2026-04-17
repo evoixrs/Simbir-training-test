@@ -11,11 +11,12 @@ def test_form_valid(form_page, base_url):
     expected_message_text = f"{len(tools)}, {max(tools, key=len)}"
 
     """Заполняем форму валидными данными с Faker"""
+    """Выбираем напитки через параметризованный метод, а не через статичные id drink2/drink3"""
+    """Выбираем цвет через параметризованный метод, а не через статичный id color3"""
     form_page.fill_name(user["name"]) \
         .fill_password(user["password"]) \
-        .select_milk() \
-        .select_coffee() \
-        .select_yellow() \
+        .select_drinks("Milk", "Coffee") \
+        .select_color("Yellow") \
         .select_automation("undecided") \
         .fill_email(user["email"]) \
         .fill_message(expected_message_text)

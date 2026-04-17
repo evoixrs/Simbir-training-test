@@ -1,7 +1,5 @@
 from selenium.common.exceptions import NoAlertPresentException
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.ui import WebDriverWait
 
 from locators.form_page_locators import FormPageLocators
 from pages.base_page import BasePage
@@ -18,16 +16,38 @@ class FormPage(BasePage):
         self.input(FormPageLocators.PASSWORD_INPUT, text)
         return self
 
+    """Выбирает любой напиток по названию, например Milk или Coffee"""
+    def select_drink(self, drink_name):
+        self.click(FormPageLocators.drink_checkbox(drink_name))
+        return self
+
+    """Оставлен быстрый метод для выбора Milk через общий select_drink"""
     def select_milk(self):
-        self.click(FormPageLocators.DRINK_MILK_CHECKBOX)
-        return self
+        return self.select_drink("Milk")
 
+    """Оставлен быстрый метод для выбора Coffee через общий select_drink"""
     def select_coffee(self):
-        self.click(FormPageLocators.DRINK_COFFEE_CHECKBOX)
+        return self.select_drink("Coffee")
+
+    """Выбирает любой цвет по названию, например Yellow"""
+    def select_color(self, color_name):
+        self.click(FormPageLocators.color_radio(color_name))
         return self
 
+    """Оставлен быстрый метод для выбора Yellow через общий select_color"""
     def select_yellow(self):
-        self.click(FormPageLocators.COLOR_YELLOW_RADIO)
+        return self.select_color("Yellow")
+
+    """Выбирает несколько напитков за один вызов, чтобы тест не зависел от отдельных id"""
+    def select_drinks(self, *drink_names):
+        for drink_name in drink_names:
+            self.select_drink(drink_name)
+        return self
+
+    """Выбирает несколько цветов за один вызов, если в сценарии понадобится больше одного значения"""
+    def select_colors(self, *color_names):
+        for color_name in color_names:
+            self.select_color(color_name)
         return self
 
     """Работа с выпадающим списком через Selenium Select"""
@@ -44,11 +64,8 @@ class FormPage(BasePage):
     ожидание появления элементов, забирает и очищает их текст"""
 
     def get_automation_tools(self):
-        WebDriverWait(self.driver, 2).until(
-            EC.presence_of_all_elements_located(
-                FormPageLocators.AUTOMATION_TOOLS_ITEMS
-            )
-        )
+        """Ожидаем список инструментов через WaitHelper перед чтением текста элементов"""
+        self.wait.elements_present(FormPageLocators.AUTOMATION_TOOLS_ITEMS, timeout=2)
         tools = self.finds(*FormPageLocators.AUTOMATION_TOOLS_ITEMS)
         return [tool.text.strip() for tool in tools]
 
@@ -75,7 +92,8 @@ class FormPage(BasePage):
     """Отправка формы и ожидание alert как признака успешной отправки"""
     def submit(self):
         self.click_submit()
-        WebDriverWait(self.driver, 10).until(EC.alert_is_present())
+        """После клика ожидаем alert через WaitHelper"""
+        self.wait.alert_present()
         return self
 
     """Методы для проверки валидации поля  Name в invalid test"""
@@ -102,11 +120,13 @@ class FormPage(BasePage):
 
     """Работа с alert после успешной отправки формы, читает текст в нём"""
     def get_alert_text(self):
-        alert = WebDriverWait(self.driver, 10).until(EC.alert_is_present())
+        """Сначала ждем alert, потом читаем его текст"""
+        alert = self.wait.alert_present()
         return alert.text
 
     """Работа с alert, закрывает его"""
     def accept_alert(self):
-        alert = WebDriverWait(self.driver, 10).until(EC.alert_is_present())
+        """Сначала ждем alert, потом подтверждаем его"""
+        alert = self.wait.alert_present()
         alert.accept()
         return self

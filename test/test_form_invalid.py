@@ -10,10 +10,11 @@ def test_form_invalid_required_name(form_page, base_url):
     message_text = form_page.build_message_from_tools()
 
     """Поле Name не заполняет, чтобы проверить обязательность поля"""
+    """Выбираем напитки через параметризованный метод, а не через статичные id drink2/drink3"""
+    """Выбираем цвет через параметризованный метод, а не через статичный id color3"""
     form_page.fill_password(user["password"]) \
-        .select_milk() \
-        .select_coffee() \
-        .select_yellow() \
+        .select_drinks("Milk", "Coffee") \
+        .select_color("Yellow") \
         .select_automation("undecided") \
         .fill_email(user["email"]) \
         .fill_message(message_text) \

@@ -1,11 +1,13 @@
 from selenium.common.exceptions import ElementClickInterceptedException
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+
+from helpers.wait_helper import WaitHelper
 
 """Класс с общими действиями"""
 class BasePage:
     def __init__(self, driver):
         self.driver = driver
+        """Создаем helper для явных ожиданий, чтобы использовать его во всех page object"""
+        self.wait = WaitHelper(driver)
 
     """Возвращает один найденный элемент"""
     def find(self, by, value):
@@ -18,9 +20,8 @@ class BasePage:
     """Клик с ожиданием кликабельности"""
     def click(self, locator, timeout=10):
         # Ждем, пока элемент станет видимым и доступным для клика.
-        element = WebDriverWait(self.driver, timeout).until(
-            EC.element_to_be_clickable(locator)
-        )
+        """Ожидаем кликабельность через WaitHelper вместо прямого WebDriverWait"""
+        element = self.wait.element_clickable(locator, timeout)
 
         """Скролл страницы, чтобы элемент оказался в зоне видимости"""
         self.driver.execute_script(
@@ -40,7 +41,8 @@ class BasePage:
 
     """Вводит текст в поле после очистки текущего значения"""
     def input(self, locator, text):
-        element = self.find(*locator)
+        """Перед вводом ожидаем видимость поля, чтобы Selenium не вводил текст в еще неготовый элемент"""
+        element = self.wait.element_visible(locator)
         element.clear()
         element.send_keys(text)
 

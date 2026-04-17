@@ -7,11 +7,21 @@ class FormPageLocators:
 
     PASSWORD_INPUT = (By.CSS_SELECTOR, "input[type='password']")
 
-    DRINK_MILK_CHECKBOX = (By.ID, "drink2")
+    """Формирует локатор checkbox по тексту напитка, чтобы не привязываться к id drink2/drink3"""
+    @staticmethod
+    def drink_checkbox(drink_name):
+        return (
+            By.XPATH,
+            f"//label[normalize-space()='{drink_name}']/preceding-sibling::input[@type='checkbox'][1]",
+        )
 
-    DRINK_COFFEE_CHECKBOX = (By.ID, "drink3")
-
-    COLOR_YELLOW_RADIO = (By.ID, "color3")
+    """Формирует локатор radio button по тексту цвета, чтобы не привязываться к id color3"""
+    @staticmethod
+    def color_radio(color_name):
+        return (
+            By.XPATH,
+            f"//label[normalize-space()='{color_name}']/preceding-sibling::input[@type='radio'][1]",
+        )
 
     AUTOMATION_SELECT = (By.ID, "automation")
     AUTOMATION_TOOLS_ITEMS = (By.CSS_SELECTOR, "label + ul li")
